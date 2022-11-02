@@ -65,20 +65,20 @@ void TrafficLight::simulate()
 }
 
 double getRandomValue(int left, int right) {
-    srand(time(0));
     return (right - rand() % left);
 }
 
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
+    srand(time(NULL));
     auto begin = std::chrono::system_clock::now();
-    double wait_seconds = getRandomValue(3, 6);
+    double wait_seconds = getRandomValue(3000, 6000);
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         auto now = std::chrono::system_clock::now();
-        auto duration = std::chrono::duration<double>(now - begin).count();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - begin).count();
         if (duration > wait_seconds) {
             if (_currentPhase == TrafficLightPhase::red) {
                 _currentPhase = TrafficLightPhase::green;
@@ -90,7 +90,7 @@ void TrafficLight::cycleThroughPhases()
             future.wait();
 
             begin = now;
-            wait_seconds = getRandomValue(3, 6);
+            wait_seconds = getRandomValue(3000, 6000);
 
         }
     }
