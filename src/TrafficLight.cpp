@@ -64,16 +64,14 @@ void TrafficLight::simulate()
     // FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread when the public method „simulate“ is called. To do this, use the thread queue in the base class. 
 }
 
-double getRandomValue(int left, int right) {
-    return (right - rand() % left);
-}
-
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
-    srand(time(NULL));
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_real_distribution<double> getNextRandom(4000, 6000);
     auto begin = std::chrono::system_clock::now();
-    double wait_seconds = getRandomValue(3000, 6000);
+    double wait_seconds = getNextRandom(eng);
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -90,7 +88,7 @@ void TrafficLight::cycleThroughPhases()
             future.wait();
 
             begin = now;
-            wait_seconds = getRandomValue(3000, 6000);
+            wait_seconds = getNextRandom(eng);
 
         }
     }
